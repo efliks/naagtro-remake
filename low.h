@@ -10,11 +10,8 @@ void unset_mode13h();
 void screen_retrace();
 
 void copy_buffer(unsigned char*);
-void clear_buffer(unsigned char*);
 
 void set_palette(unsigned char*);
 void load_palette(unsigned char*);
-
-void soft_segment(unsigned char*);
 
 #endif

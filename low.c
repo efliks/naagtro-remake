@@ -52,11 +52,6 @@ void copy_buffer(unsigned char* frame_buffer)
     __djgpp_nearptr_disable();
 }
 
-void clear_buffer(unsigned char* frame_buffer)
-{
-    memset(frame_buffer, 0, 64000);
-}
-
 void screen_retrace()
 {
     while (!(inp(0x03da) & 8))
@@ -83,34 +78,4 @@ void load_palette(unsigned char* palette)
     for (i = 0; i < 768; i++) {
         palette[i] = inp(0x03c9);
     }
-}
-
-void soft_segment(unsigned char* frame_buffer)
-{
-    unsigned char* ptr = frame_buffer;
-    int i, color;
-
-    for (i = 0; i < 0xffff; i++) {
-        color = *(ptr + ((i - 1) & 0xffff));
-        color += *(ptr + ((i + 1) & 0xffff));
-        color += *(ptr + ((i - 320) & 0xffff));
-        color += *(ptr + ((i + 320) & 0xffff));
-        color >>= 2;
-        *ptr = (unsigned char)color;
-        ptr++;
-    }
-
-    /*
-    memset(ptr, 0, 320);
-    ptr += 320;
-
-    for (i = 0; i < 64000 - 320 * 2; i++) {
-        color = *(ptr - 1) + *(ptr + 1) + *(ptr - 320) + *(ptr + 320);
-        color >>= 2;
-        *ptr = (unsigned char)color;
-        ptr++;
-    }
-
-    memset(ptr, 0, 320);
-    */
 }
