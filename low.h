@@ -9,9 +9,12 @@ void unset_mode13h();
 
 void screen_retrace();
 
-void copy_buffer(unsigned char*);
+void copy_buffer(unsigned char *);
 
-void set_palette(unsigned char*);
-void load_palette(unsigned char*);
+void set_palette(unsigned char *);
+void load_palette(unsigned char *);
+
+void do_blur(unsigned char *, int, int);
+void do_segment_blur(unsigned char *);
 
 #endif

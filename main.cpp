@@ -49,28 +49,7 @@ DisplayController::~DisplayController()
 
 void DisplayController::blur()
 {
-    unsigned char* pbf = buffer_.data();
-
-    for (int i = 0; i < width_; i++) {
-        *pbf = 0;
-        pbf++;
-    }
-
-    for (int i = 0; i < width_ * (height_ - 2); i++) {
-        int color;
-        color = *(pbf - 1);
-        color += *(pbf + 1);
-        color += *(pbf - width_);
-        color += *(pbf + width_);
-        color >>= 2;
-        *pbf = static_cast<unsigned char>(color);
-        pbf++;
-    }
-
-    for (int i = 0; i < width_; i++) {
-        *pbf = 0;
-        pbf++;
-    }
+    do_blur(buffer_.data(), width_, height_);
 }
 
 void DisplayController::flip()

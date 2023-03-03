@@ -79,3 +79,45 @@ void load_palette(unsigned char* palette)
         palette[i] = inp(0x03c9);
     }
 }
+
+void do_blur(unsigned char* frame_buffer, int width, int height)
+{
+    int i;
+    int color;
+    unsigned char* pbf = frame_buffer;
+
+    for (i = 0; i < width; i++) {
+        *pbf = 0;
+        pbf++;
+    }
+
+    for (i = 0; i < width * (height - 2); i++) {
+        color = *(pbf - 1);
+        color += *(pbf + 1);
+        color += *(pbf - width);
+        color += *(pbf + width);
+        color >>= 2;
+        *pbf = (unsigned char)color;
+        pbf++;
+    }
+
+    for (i = 0; i < width; i++) {
+        *pbf = 0;
+        pbf++;
+    }
+}
+
+void do_segment_blur(unsigned char* frame_buffer)
+{
+    int i;
+    int color;
+
+    for (i = 0; i < 0xffff; i++) {
+        color = *(frame_buffer + ((i - 1) & 0xffff));
+        color += *(frame_buffer + ((i + 1) & 0xffff));
+        color += *(frame_buffer + ((i - 320) & 0xffff));
+        color += *(frame_buffer + ((i + 320) & 0xffff));
+        color >>= 2;
+        *(frame_buffer + i) = (unsigned char)color;
+    }
+}
