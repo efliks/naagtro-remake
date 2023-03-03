@@ -112,7 +112,7 @@ void do_segment_blur(unsigned char* frame_buffer)
     int i;
     int color;
 
-    for (i = 0; i < 0xffff; i++) {
+    for (i = 0; i <= 0xffff; i++) {
         color = *(frame_buffer + ((i - 1) & 0xffff));
         color += *(frame_buffer + ((i + 1) & 0xffff));
         color += *(frame_buffer + ((i - 320) & 0xffff));
