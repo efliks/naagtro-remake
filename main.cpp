@@ -1,6 +1,7 @@
 #include <stddef.h>
 #include <stdlib.h>
 #include <time.h>
+#include <string.h> // for memcpy
 
 #include "naagtro.h"
 
@@ -73,32 +74,42 @@ unsigned char* DisplayController::data()
 
 void init_bumpmap(unsigned char* bumpmap)
 {
+    const int bmap_size = 65536;
+    const int bmap_visible_size = 320 * 200;
+
+    const int naaglogo_size = 320 * 70;
+
+    const int filler_size = (bmap_visible_size - naaglogo_size) / 2;
+
+    const int prefill_size = ( (bmap_size - bmap_visible_size) / 2 / 320 ) * 320;
+    const int postfill_size = bmap_size - bmap_visible_size - prefill_size;
+
+
     unsigned char* ptr_bumpmap = bumpmap;
-    for (int i = 0; i < 32000 - 320 * 70 / 2; i++, ptr_bumpmap++) {
+    for (int i = 0; i < prefill_size + filler_size; i++, ptr_bumpmap++) {
         *ptr_bumpmap = 0;
     }
 
     //unpack NAAG logo
     unsigned char* ptr_packed_logo = naaglogo;
 
-    for (int i = 32000 - 320 * 70 / 2; i < 320 * 70 / 8; i++, ptr_packed_logo++) {
+    for (int i = 0; i < naaglogo_size / 8; i++, ptr_packed_logo++) {
         for (int j = 7; j >= 0; j--, ptr_bumpmap++) {
             if ((*ptr_packed_logo >> j) & 1) {
-                //make logo look convex
                 *ptr_bumpmap = 0;
             }
             else {
-                *ptr_bumpmap = 255;
+                *ptr_bumpmap = 1;
             }
         }
     }
 
-    for (int i = 0; i < 32000 - 320 * 70 / 2; i++, ptr_bumpmap++) {
+    for (int i = 0; i < postfill_size; i++, ptr_bumpmap++) {
         *ptr_bumpmap = 0;
     }
 
     ptr_bumpmap = bumpmap;
-    for (int i = 0; i < 65536; i++, ptr_bumpmap++) {
+    for (int i = 0; i < bmap_size; i++, ptr_bumpmap++) {
         if (*ptr_bumpmap != 0) {
            *ptr_bumpmap = static_cast<unsigned char>(rand() & 255);
         }
@@ -121,8 +132,18 @@ int main(void)
     unsigned char* ptr_bumpmap = new unsigned char[65536];
     init_bumpmap(ptr_bumpmap);
 
+    //initialize environ map
+    unsigned char* ptr_envmap = new unsigned char[65536];
+
+    //initialize scroll buffer
+    unsigned char* ptr_scroll_buffer = new unsigned char[320 * 8];
+
     char key;
     DisplayController dc(naagpal);
+
+    //FIXME
+    unsigned char* ptr_fb = dc.data();
+    memcpy(ptr_fb, ptr_bumpmap + 320 * 2, 64000);
 
     dc.flip();
 
@@ -136,9 +157,15 @@ int main(void)
     }
 
     //clean up
+    if (ptr_scroll_buffer != nullptr) {
+        delete[] ptr_scroll_buffer;
+    }
+    if (ptr_envmap != nullptr) {
+        delete[] ptr_envmap;
+    }
     if (ptr_bumpmap != nullptr) {
         delete[] ptr_bumpmap;
     }
-    
+
     return 0;
 }
