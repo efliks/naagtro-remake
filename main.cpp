@@ -1,6 +1,7 @@
 #include <stddef.h>
 #include <stdlib.h>
 #include <time.h>
+#include <math.h>
 #include <string.h> // for memcpy
 
 #include "naagtro.h"
@@ -84,7 +85,6 @@ void init_bumpmap(unsigned char* bumpmap)
     const int prefill_size = ( (bmap_size - bmap_visible_size) / 2 / 320 ) * 320;
     const int postfill_size = bmap_size - bmap_visible_size - prefill_size;
 
-
     unsigned char* ptr_bumpmap = bumpmap;
     for (int i = 0; i < prefill_size + filler_size; i++, ptr_bumpmap++) {
         *ptr_bumpmap = 0;
@@ -123,6 +123,25 @@ void init_bumpmap(unsigned char* bumpmap)
     //done initializing bump map
 }
 
+void init_envmap(unsigned char* envmap)
+{
+    unsigned char* ptr_envmap = envmap;
+
+    for (double x = -128; x < 128; x++) {
+        for (double y = -128; y < 128; y++) {
+            double v = 63 - sqrt(x * x  + y * y) * 63;
+            if (v < 0) {
+                v = 0;
+            }
+            else if (v > 63) {
+                v = 63;
+            }
+            *ptr_envmap = static_cast<unsigned char>(v);
+            ptr_envmap++;
+        }
+    }
+}
+
 int main(void)
 {
     //initialize RNG
@@ -134,6 +153,7 @@ int main(void)
 
     //initialize environ map
     unsigned char* ptr_envmap = new unsigned char[65536];
+    init_envmap(ptr_envmap);
 
     //initialize scroll buffer
     unsigned char* ptr_scroll_buffer = new unsigned char[320 * 8];
@@ -143,7 +163,7 @@ int main(void)
 
     //FIXME
     unsigned char* ptr_fb = dc.data();
-    memcpy(ptr_fb, ptr_bumpmap + 320 * 2, 64000);
+    memcpy(ptr_fb, ptr_envmap + 320 * 2, 64000);
 
     dc.flip();
 
