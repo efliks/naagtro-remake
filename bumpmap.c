@@ -70,16 +70,16 @@ void init_envmap(unsigned char* envmap)
     unsigned char* ptr_envmap = envmap;
 
     for (double y = -128; y < 128; y++) {
-        for (double x = -128; x < 128; x++) {
-            double v = sqrt(pow(x / 128, 2) + pow(y / 128, 2)) * 63;
-            if (v < 0) {
-                v = 0;
+        for (double x = -128; x < 128; x++, ptr_envmap++) {
+            double v = 63 * (1 - sqrt(pow(x / 128, 2) + pow(y / 128, 2)));
+            char w = (char)v;
+            if (w < 0) {
+                w = 0;
             }
-            else if (v > 63) {
-                v = 63;
+            else if (w > 63) {
+                w = 63;
             }
-            *ptr_envmap = 63 - (unsigned char)v;
-            ptr_envmap++;
+            *ptr_envmap = (unsigned char)w;
         }
     }
 }
@@ -89,7 +89,7 @@ void init_way(double* way_table, int size_table)
     double* ptr_table = way_table;
 
     for (double i = 0; i < size_table; i++) {
-        *ptr_table = sin(i * M_PI / (size_table / 2)) * size_table / 2;
+        *ptr_table = sin(i * M_PI / (size_table / 2)) * size_table / 4;
         ptr_table++;
     }
 }
@@ -129,11 +129,8 @@ void do_bump_mapping(unsigned char* frame_buffer)
     light_pos_y += 1;
     int light_y = (int)(200 / 2 + 0.5 * way_table[light_pos_y % WAYTABLE_SIZE]);
 
-    //int light_x = 320 / 2;
-    //int light_y = 200 / 2;
-
     unsigned char* ptr_fb = frame_buffer + 320;
-    unsigned char* ptr_bump = ptr_bumpmap + 3 * 320;  // ?????
+    unsigned char* ptr_bump = ptr_bumpmap + 3 * 320;
 
     for (int y = 1; y < 199; y++) {
         for (int x = 0; x < 320; x++, ptr_fb++, ptr_bump++) {
