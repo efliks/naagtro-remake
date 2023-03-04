@@ -16,18 +16,19 @@ static int light_pos_x, light_pos_y;
 void init_bumpmap(unsigned char* bumpmap)
 {
     const int bmap_size = 65536;
-    const int bmap_visible_size = 320 * 200;
+    const int bmap_visible_size = 320 * 200;  // 64000
 
-    const int naaglogo_size = 320 * 70;
+    const int naaglogo_size = 320 * 70;  // 22400
 
-    const int filler_size = (bmap_visible_size - naaglogo_size) / 2;
+    const int filler_size = (bmap_visible_size - naaglogo_size) / 2;  // 20800
 
-    const int prefill_size = ( (bmap_size - bmap_visible_size) / 2 / 320 ) * 320;
-    const int postfill_size = bmap_size - bmap_visible_size - prefill_size;
+    const int otherfill_size = bmap_size - 2 * filler_size - naaglogo_size;  // 1536
+    const int prefill_size = ( otherfill_size / 2 / 320 ) * 320;  // 640
+    const int postfill_size = otherfill_size - prefill_size;  // 896
 
     unsigned char* ptr_bumpmap = bumpmap;
     for (int i = 0; i < prefill_size + filler_size; i++, ptr_bumpmap++) {
-        *ptr_bumpmap = 0;
+        *ptr_bumpmap = 255;
     }
 
     //unpack NAAG logo
@@ -39,13 +40,13 @@ void init_bumpmap(unsigned char* bumpmap)
                 *ptr_bumpmap = 0;
             }
             else {
-                *ptr_bumpmap = 1;
+                *ptr_bumpmap = 255;
             }
         }
     }
 
-    for (int i = 0; i < postfill_size; i++, ptr_bumpmap++) {
-        *ptr_bumpmap = 0;
+    for (int i = 0; i < filler_size + postfill_size; i++, ptr_bumpmap++) {
+        *ptr_bumpmap = 255;
     }
 
     //add random noise
@@ -68,16 +69,16 @@ void init_envmap(unsigned char* envmap)
 {
     unsigned char* ptr_envmap = envmap;
 
-    for (double x = -128; x < 128; x++) {
-        for (double y = -128; y < 128; y++) {
-            double v = 63 - sqrt(x * x  + y * y) * 63;
+    for (double y = -128; y < 128; y++) {
+        for (double x = -128; x < 128; x++) {
+            double v = sqrt(pow(x / 128, 2) + pow(y / 128, 2)) * 63;
             if (v < 0) {
                 v = 0;
             }
             else if (v > 63) {
                 v = 63;
             }
-            *ptr_envmap = (unsigned char)v;
+            *ptr_envmap = 63 - (unsigned char)v;
             ptr_envmap++;
         }
     }
@@ -128,8 +129,11 @@ void do_bump_mapping(unsigned char* frame_buffer)
     light_pos_y += 1;
     int light_y = (int)(200 / 2 + 0.5 * way_table[light_pos_y % WAYTABLE_SIZE]);
 
+    //int light_x = 320 / 2;
+    //int light_y = 200 / 2;
+
     unsigned char* ptr_fb = frame_buffer + 320;
-    unsigned char* ptr_bump = ptr_bumpmap + 320;  // ?????
+    unsigned char* ptr_bump = ptr_bumpmap + 3 * 320;  // ?????
 
     for (int y = 1; y < 199; y++) {
         for (int x = 0; x < 320; x++, ptr_fb++, ptr_bump++) {
@@ -141,7 +145,7 @@ void do_bump_mapping(unsigned char* frame_buffer)
             if (w < 0 || w > 255) {
                 w = 0;
             }
-            unsigned char pix = *ptr_bump; //*(ptr_envmap + (w << 8) + v);
+            unsigned char pix = *(ptr_envmap + (w << 8) + v);
             *ptr_fb = pix;
         }
     }
