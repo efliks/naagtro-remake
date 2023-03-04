@@ -108,6 +108,7 @@ void init_bumpmap(unsigned char* bumpmap)
         *ptr_bumpmap = 0;
     }
 
+    //add random noise
     ptr_bumpmap = bumpmap;
     for (int i = 0; i < bmap_size; i++, ptr_bumpmap++) {
         if (*ptr_bumpmap != 0) {
@@ -142,6 +143,16 @@ void init_envmap(unsigned char* envmap)
     }
 }
 
+void init_way(double* way_table, int size_table)
+{
+    double* ptr_table = way_table;
+
+    for (double i = 0; i < size_table; i++) {
+        *ptr_table = sin(i * M_PI / (size_table / 2)) * size_table / 2;
+        ptr_table++;
+    }
+}
+
 int main(void)
 {
     //initialize RNG
@@ -157,6 +168,9 @@ int main(void)
 
     //initialize scroll buffer
     unsigned char* ptr_scroll_buffer = new unsigned char[320 * 8];
+
+    double way_table[256];
+    init_way(way_table, 256);
 
     char key;
     DisplayController dc(naagpal);
