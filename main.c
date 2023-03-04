@@ -1,8 +1,10 @@
 #include <stdlib.h>
 
 #include "naagtro.h"
-#include "bumpmap.h"
 #include "low.h"
+
+#include "bumpmap.h"
+#include "scroll.h"
 
 static unsigned char* ptr_frame_buffer;
 
@@ -12,8 +14,9 @@ int main(void)
     set_mode13h();
     set_palette(naagpal);
 
+    init_scroll();
     init_bump_mapping();
-    
+
     ptr_frame_buffer = (unsigned char *)malloc(64000 * sizeof(unsigned char));
 
     while (1) {
@@ -25,6 +28,8 @@ int main(void)
         }
 
         do_bump_mapping(ptr_frame_buffer);
+        do_scroll(199 - 8, ptr_frame_buffer);
+
         copy_buffer(ptr_frame_buffer);
     }
     
