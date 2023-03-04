@@ -31,6 +31,7 @@ void set_mode13h()
     memset(&r, 0, sizeof(__dpmi_regs));
     r.x.ax = 0x13;
     __dpmi_int(0x10, &r);
+    __djgpp_nearptr_enable();
 }
 
 void unset_mode13h()
@@ -40,16 +41,15 @@ void unset_mode13h()
     memset(&r, 0, sizeof(__dpmi_regs));
     r.x.ax = 0x03;
     __dpmi_int(0x10, &r);
+    __djgpp_nearptr_disable();
 }
 
 void copy_buffer(unsigned char* frame_buffer)
 {
-    unsigned char* screen;
+    unsigned char* ptr_vidmem;
 
-    __djgpp_nearptr_enable();
-    screen = (unsigned char*)0x0a0000 + __djgpp_conventional_base;
-    memcpy(screen, frame_buffer, 64000);
-    __djgpp_nearptr_disable();
+    ptr_vidmem = (unsigned char*)0x0a0000 + __djgpp_conventional_base;
+    memcpy(ptr_vidmem, frame_buffer, 64000);
 }
 
 void screen_retrace()
