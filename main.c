@@ -10,7 +10,7 @@ unsigned char* ptr_frame_buffer;
 int main(void)
 {
     set_mode13h();
-    set_palette(naagpal);
+    //set_palette(naagpal);
 
     init_bump_mapping();
     
@@ -22,7 +22,10 @@ int main(void)
             if (key == 27) {  // ESC
                 break;
             }
-        } 
+        }
+
+        do_bump_mapping(ptr_frame_buffer);
+        copy_buffer(ptr_frame_buffer);
     }
     
     if (ptr_frame_buffer != NULL) {

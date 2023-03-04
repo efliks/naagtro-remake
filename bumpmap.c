@@ -6,10 +6,11 @@
 #include "naagtro.h"
 
 #define WAYTABLE_SIZE 256
-unsigned char way_table[WAYTABLE_SIZE];
+static double way_table[WAYTABLE_SIZE];
 
-unsigned char* ptr_bumpmap, *ptr_envmap;
-int light_pos_x, light_pos_y;
+static unsigned char *ptr_bumpmap, *ptr_envmap;
+
+static int light_pos_x, light_pos_y;
 
 
 void init_bumpmap(unsigned char* bumpmap)
@@ -104,6 +105,9 @@ void init_bump_mapping()
     //initialize environ map
     ptr_envmap = (unsigned char *)malloc(65536 * sizeof(unsigned char));
     init_envmap(ptr_envmap);
+
+    //initialize way table
+    init_way(way_table, WAYTABLE_SIZE);
 }
 
 void deinit_bump_mapping()
@@ -118,4 +122,27 @@ void deinit_bump_mapping()
 
 void do_bump_mapping(unsigned char* frame_buffer)
 {
+    light_pos_x += 2;
+    int light_x = (int)(320 / 2 + 2 * way_table[light_pos_x % WAYTABLE_SIZE]);
+
+    light_pos_y += 1;
+    int light_y = (int)(200 / 2 + 0.5 * way_table[light_pos_y % WAYTABLE_SIZE]);
+
+    unsigned char* ptr_fb = frame_buffer + 320;
+    unsigned char* ptr_bump = ptr_bumpmap + 320;  // ?????
+
+    for (int y = 1; y < 199; y++) {
+        for (int x = 0; x < 320; x++, ptr_fb++, ptr_bump++) {
+            int v = *(ptr_bump - 1) - *(ptr_bump + 1) - x + light_x + 128;
+            if (v < 0 || v > 255) {
+                v = 0;
+            }
+            int w = *(ptr_bump - 320) - *(ptr_bump + 320) - y + light_y + 128;
+            if (w < 0 || w > 255) {
+                w = 0;
+            }
+            unsigned char pix = *ptr_bump; //*(ptr_envmap + (w << 8) + v);
+            *ptr_fb = pix;
+        }
+    }
 }
