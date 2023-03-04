@@ -73,6 +73,44 @@ unsigned char* DisplayController::data()
     return buffer_;
 }
 
+/*
+class BumpMappingController
+{
+public:
+    BumpMappingController(DisplayController*, unsigned char*, unsigned char*, double*, int);
+    ~BumpMappingController();
+
+    void do_bump();
+
+private:
+    DisplayController* ptr_display_;
+
+    unsigned char* ptr_bumpmap_;
+    unsigned char* ptr_envmap_;
+
+    double* ptr_waytable_;
+    int waytable_size_;
+
+    int light_pos_x;
+    int light_pos_y;
+};
+
+BumpMappingController::BumpMappingController(DisplayController* ptr_display, unsigned char* ptr_bumpmap, unsigned char* ptr_envmap, double* ptr_waytable, int waytable_size)
+    : ptr_display_(ptr_display)
+    , ptr_bumpmap_(ptr_bumpmap)
+    , ptr_envmap_(ptr_envmap)
+    , ptr_waytable_(ptr_waytable)
+    , waytable_size_(waytable_size)
+    , light_pos_x(0)
+    , light_pos_y(0)
+{
+}
+
+BumpMappingController::~BumpMappingController()
+{
+}
+*/
+
 void init_bumpmap(unsigned char* bumpmap)
 {
     const int bmap_size = 65536;
@@ -153,6 +191,59 @@ void init_way(double* way_table, int size_table)
     }
 }
 
+/*
+struct BumpMappingConfig
+{
+    DisplayController* ptr_display;
+
+    unsigned char* ptr_bumpmap;
+    unsigned char* ptr_envmap;
+
+    double* ptr_waytable;
+    int waytable_size;
+
+    int light_pos_x;
+    int light_pos_y;
+};
+*/
+
+void do_bump_mapping(unsigned char* ptr_fb, unsigned char* ptr_bumpmap, unsigned char* ptr_envmap, unsigned char* ptr_waytable, int waytable_size, int& light_x, int& light_y)
+{
+    light_x += 2;
+    light_x %= waytable_size;
+    double tmp_x = ptr_waytable[light_x] * 2 + 320 / 2;
+
+    light_y += 1;
+    light_y %= waytable_size;
+    double tmp_y = ptr_waytable[light_y] / 2 + 200 / 2;
+
+    int light_pos_x = static_cast<int>(tmp_x);
+    int light_pos_y = static_cast<int>(tmp_y);
+
+    /*
+    config->light_pos_x += 2;
+    config->light_pos_x %= config->waytable_size;
+
+    config->light_pos_y += 1;
+    config->light_pos_y %= config->waytable_size;
+
+    double tmp_x = config->ptr_waytable[config->light_pos_x] * 2 + 320 / 2;
+    double tmp_y = config->ptr_waytable[config->light_pos_y] / 2 + 200 / 2;
+
+    int light_x = static_cast<int>(tmp_x);
+    int light_y = static_cast<int>(tmp_y);
+
+    unsigned char* ptr_bumpmap = config->ptr_bumpmap + 320;
+    unsigned char* ptr_frame_buffer = config->ptr_display->data() + 320;
+    */
+
+    for (int i = 1; i < 199; i++) {
+        for (int j = 0; j < 320; j++) {
+
+        }
+    }
+}
+
 int main(void)
 {
     //initialize RNG
@@ -175,11 +266,7 @@ int main(void)
     char key;
     DisplayController dc(naagpal);
 
-    //FIXME
-    unsigned char* ptr_fb = dc.data();
-    memcpy(ptr_fb, ptr_envmap + 320 * 2, 64000);
-
-    dc.flip();
+    //BumpMappingConfig bump_mapping_config{&dc, ptr_bumpmap, ptr_envmap, way_table, 256, 0, 0};
 
     while (1) {
         if (is_key_pressed()) {
@@ -188,6 +275,9 @@ int main(void)
                 break;
             }
         } 
+
+        //do_bump_mapping(&bump_mapping_config);
+        dc.flip();
     }
 
     //clean up
