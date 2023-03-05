@@ -8,7 +8,7 @@ add_definitions(${GCC_COVERAGE_COMPILE_FLAGS})
 add_library(low STATIC low.c)
 target_include_directories(low PUBLIC /home/mikolaj/local/opt/djgpp-12.1.0/i586-pc-msdosdjgpp/sys-include)
 
-add_executable(naagtro.exe main.c bumpmap.c data.c scroll.c)
+add_executable(naagtro.exe main.c bumpmap.c data.c scroll.c tunnel.c)
 #target_include_directories(naagtro.exe PUBLIC)
 
 target_link_libraries(naagtro.exe PUBLIC low)
