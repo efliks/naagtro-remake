@@ -42,7 +42,6 @@ void create_texture(unsigned char* ptr_texture)
 
     for (int i = 0; i < 256; i++) {
         unsigned char tt = *(cosine_lookup + (tex_c & 0xff)) + *(cosine_lookup + (tex_d & 0xff));
-
         for (int j = 0; j < 256; j++) {
             *ptr_tex = tt + *(cosine_lookup + (tex_a & 0xff)) + *(cosine_lookup + (tex_b & 0xff));
             ptr_tex++;
@@ -51,6 +50,11 @@ void create_texture(unsigned char* ptr_texture)
         }
         tex_c += 5;
         tex_d += 1;
+    }
+
+    //apply blur
+    for (int i = 0; i < 2; i++) {
+        do_segment_blur(ptr_texture, 256);
     }
 }
 
@@ -63,7 +67,7 @@ void create_tunnel(struct TunnelElement* ptr_tunnel)
             double sqr_i2j2 = sqrt(i * i + j * j);
 
             ptr_tun->x = (unsigned char)( 4096.0 / (sqr_i2j2 + 1) ) & 0xff;
-             ptr_tun->y = (unsigned char)( atan2(i, j) * M_PI / 256.0 ) & 0xff;
+             ptr_tun->y = (unsigned char)( atan2(i, j) * 256.0 / M_PI ) & 0xff;
 
             int foo = (unsigned char)( (189 - 32 - (int)sqr_i2j2) >> 2 );  // ???
             if (foo < 0) {
@@ -101,9 +105,11 @@ void do_tunnel(unsigned char* frame_buffer)
     struct TunnelElement* ptr_tun = ptr_tunnel;
     unsigned char* ptr_fb = frame_buffer;
 
-    for (int i = 0; i < 64000; i++, ptr_tun++, ptr_fb++) {
+    for (int i = 0; i < 64000; i++) {
         int texx = (ptr_tun->x + tunnel_move) & 0xff;
          int texy = (ptr_tun->y + tunnel_move) & 0xff;
          *ptr_fb = ( *(ptr_texture + (texy << 8) + texx) ) - ptr_tun->t;
+         ptr_fb++;
+         ptr_tun++;
     }
 }

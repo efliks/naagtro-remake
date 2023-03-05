@@ -72,7 +72,7 @@ void init_bumpmap(unsigned char* bumpmap)
 
     //blur several times
     for (int i = 0; i < 4; i++) {
-        do_segment_blur(bumpmap);
+        do_segment_blur(bumpmap, 320);
     }
 
     //done initializing bump map

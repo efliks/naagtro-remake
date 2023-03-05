@@ -109,7 +109,7 @@ void do_blur(unsigned char* frame_buffer, int width, int height)
     }
 }
 
-void do_segment_blur(unsigned char* frame_buffer)
+void do_segment_blur(unsigned char* frame_buffer, int width)
 {
     int i;
     int color;
@@ -117,8 +117,8 @@ void do_segment_blur(unsigned char* frame_buffer)
     for (i = 0; i <= 0xffff; i++) {
         color = *(frame_buffer + ((i - 1) & 0xffff));
         color += *(frame_buffer + ((i + 1) & 0xffff));
-        color += *(frame_buffer + ((i - 320) & 0xffff));
-        color += *(frame_buffer + ((i + 320) & 0xffff));
+        color += *(frame_buffer + ((i - width) & 0xffff));
+        color += *(frame_buffer + ((i + width) & 0xffff));
         color >>= 2;
         *(frame_buffer + i) = (unsigned char)color;
     }

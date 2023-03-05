@@ -15,6 +15,6 @@ void set_palette(unsigned char *);
 void load_palette(unsigned char *);
 
 void do_blur(unsigned char *, int, int);
-void do_segment_blur(unsigned char *);
+void do_segment_blur(unsigned char *, int);
 
 #endif
