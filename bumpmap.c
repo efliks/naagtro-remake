@@ -13,12 +13,17 @@
 #include "low.h"
 #include "naagtro.h"
 
+struct WayLocation
+{
+    int x, y;
+};
+
 #define WAYTABLE_SIZE 256
-static double way_table[WAYTABLE_SIZE];
+static struct WayLocation way_table[WAYTABLE_SIZE];
 
 static unsigned char *ptr_bumpmap, *ptr_envmap;
 
-static int light_pos_x, light_pos_y;
+static int light_loc;
 
 
 void init_bumpmap(unsigned char* bumpmap)
@@ -92,12 +97,13 @@ void init_envmap(unsigned char* envmap)
     }
 }
 
-void init_way(double* way_table, int size_table)
+void init_way(struct WayLocation* way_table, int size_table)
 {
-    double* ptr_table = way_table;
+    struct WayLocation* ptr_table = way_table;
 
-    for (double i = 0; i < size_table; i++) {
-        *ptr_table = sin(i * M_PI / (size_table / 2)) * size_table / 4;
+    for (int i = 0; i < size_table; i++) {
+        ptr_table->x = (int)(120 * cos(i * M_PI / (size_table / 2)) ) + 320 / 2;
+        ptr_table->y = (int)(35 * sin(i * M_PI / (size_table / 2)) ) + 200 / 2;
         ptr_table++;
     }
 }
@@ -131,22 +137,18 @@ void deinit_bump_mapping()
 
 void do_bump_mapping(unsigned char* frame_buffer)
 {
-    light_pos_x += 2;
-    int light_x = (int)(320 / 2 + 2 * way_table[light_pos_x % WAYTABLE_SIZE]);
-
-    light_pos_y += 1;
-    int light_y = (int)(200 / 2 + 0.5 * way_table[light_pos_y % WAYTABLE_SIZE]);
+    light_loc = (light_loc + 1) % WAYTABLE_SIZE;
 
     unsigned char* ptr_fb = frame_buffer + 320;
     unsigned char* ptr_bump = ptr_bumpmap + 3 * 320;
 
     for (int y = 1; y < 199; y++) {
         for (int x = 0; x < 320; x++, ptr_fb++, ptr_bump++) {
-            int v = *(ptr_bump - 1) - *(ptr_bump + 1) - x + light_x + 128;
+            int v = *(ptr_bump - 1) - *(ptr_bump + 1) - x + way_table[light_loc].x + 128;
             if (v < 0 || v > 255) {
                 v = 0;
             }
-            int w = *(ptr_bump - 320) - *(ptr_bump + 320) - y + light_y + 128;
+            int w = *(ptr_bump - 320) - *(ptr_bump + 320) - y + way_table[light_loc].y + 128;
             if (w < 0 || w > 255) {
                 w = 0;
             }
