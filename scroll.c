@@ -1,3 +1,11 @@
+/*****************************************
+  NAAGTRO version 2
+
+  scroll.c   Scrolling text effect
+
+  (C) March 5, 2023  M. Feliks
+*****************************************/
+
 #include <string.h>
 
 #include "scroll.h"
@@ -6,7 +14,6 @@
 static char scrolltext[] = "New Age ASM Group proudly presents a short intro made by Majuma in pure 32-bit Assembler ;) *** If you want to join our group or just have any reason for contacting us, visit our web page: www.naag.prv.pl *** Greetings are scrolling to all members of NAAG: HaRv3sTeR, Klemik, tOudi, SEM, pkmiecik, Overlord, Oolv, Miodzio, asmCode, _TeStON_, Zedd and anybody I forgot... Keep coding !                              ";
 
 static unsigned char scrollbuffer[320 * 8];
-
 static unsigned int curr_char = 0, curr_col = 0;
 
 
@@ -18,7 +25,6 @@ void init_scroll()
 void do_scroll(int y, unsigned char* frame_buffer)
 {
     char my_char = scrolltext[curr_char % (sizeof (scrolltext) / sizeof (char))];
-
     if (my_char > 'a' && my_char < 'z') {
        my_char += ('A' - 'a');
     }

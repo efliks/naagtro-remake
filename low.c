@@ -1,8 +1,10 @@
-/*
- * FlatGrd2 06/02/02
- * Mikolaj Felix a.k.a. Majuma
- * mfelix@polbox.com
- */
+/*****************************************
+  NAAGTRO version 2
+
+  low.c   Low-level access to hardware
+
+  (C) March 5, 2023  M. Feliks
+*****************************************/
 
 #include <dos.h>
 #include <dpmi.h>

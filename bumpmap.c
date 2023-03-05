@@ -1,3 +1,11 @@
+/*****************************************
+  NAAGTRO version 2
+
+  bumpmap.c   Bump mapping effect
+
+  (C) March 5, 2023  M. Feliks
+*****************************************/
+
 #include <stdlib.h>
 #include <time.h>
 #include <math.h>

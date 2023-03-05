@@ -1,3 +1,11 @@
+/*****************************************
+  NAAGTRO version 2
+
+  main.c   Main program loop
+
+  (C) March 5, 2023  M. Feliks
+*****************************************/
+
 #include <stdlib.h>
 
 #include "naagtro.h"
