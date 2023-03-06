@@ -7,6 +7,7 @@
 *****************************************/
 
 #include <stdlib.h>
+#include <string.h>  // for memset
 #include <time.h>
 #include <math.h>
 
@@ -141,6 +142,9 @@ void do_bump_mapping(unsigned char* frame_buffer)
 
     unsigned char* ptr_fb = frame_buffer + 320;
     unsigned char* ptr_bump = ptr_bumpmap + 3 * 320;
+
+    memset(frame_buffer, 0, 320);
+    memset(frame_buffer + 199 * 320, 0, 320);
 
     for (int y = 1; y < 199; y++) {
         for (int x = 0; x < 320; x++, ptr_fb++, ptr_bump++) {
