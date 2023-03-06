@@ -24,17 +24,17 @@ void init_scroll()
 
 void do_scroll(int y, unsigned char* frame_buffer)
 {
-    char my_char = scrolltext[curr_char % (sizeof (scrolltext) / sizeof (char))];
-    if (my_char > 'a' && my_char < 'z') {
+    char my_char = scrolltext[curr_char % ( (sizeof (scrolltext) / sizeof (char)) - 1)];
+    if (my_char >= 'a' && my_char <= 'z') {
        my_char += ('A' - 'a');
     }
 
-    unsigned char* ptr_char = &chardata[((my_char - 32) & 63) << 3];
+    unsigned char* ptr_char = &chardata[((my_char - ' ') & 63) << 3];
     int col_idx = 7 - (curr_col & 7);
 
     for (int i = 0; i < 8; i++, ptr_char++) {
         if ((*ptr_char >> col_idx) & 1) {
-            *(scrollbuffer + i * 320 + 319) = (unsigned char)64;
+            *(scrollbuffer + i * 320 + 319) = (unsigned char)(64 + i);
         }
         else {
             *(scrollbuffer + i * 320 + 319) = 0;
