@@ -43,7 +43,7 @@ void create_texture(unsigned char* ptr_texture)
     for (int i = 0; i < 256; i++) {
         unsigned char tt = *(cosine_lookup + (tex_c & 0xff)) + *(cosine_lookup + (tex_d & 0xff));
         for (int j = 0; j < 256; j++) {
-            *ptr_tex = tt + *(cosine_lookup + (tex_a & 0xff)) + *(cosine_lookup + (tex_b & 0xff));
+            *ptr_tex = ( tt + *(cosine_lookup + (tex_a & 0xff)) + *(cosine_lookup + (tex_b & 0xff)) ) & 0x3f;
             ptr_tex++;
             tex_a += 4;
             tex_b += 3;
