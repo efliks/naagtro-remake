@@ -7,6 +7,7 @@
 *****************************************/
 
 #include <stdlib.h>
+#include <string.h>
 
 #include "naagtro.h"
 #include "low.h"
@@ -16,7 +17,42 @@
 #include "scroll.h"
 
 static unsigned char* ptr_frame_buffer;
+static unsigned char palette_current[768], palette_target[768];
 
+static int flash_count = 64;
+
+
+void init_flash()
+{
+    if (flash_count > 63) {
+       flash_count = 0;
+    }
+}
+
+void do_flash()
+{
+    if (flash_count > 63) {
+        return;
+    }
+    if (flash_count == 0) {
+        load_palette(palette_target);
+
+        // set all white palette
+        memset(palette_current, 63, 768);
+        set_palette(palette_current);
+    }
+    else {
+        load_palette(palette_current);
+
+        for (int i = 0; i < 768; i++) {
+            if (palette_current[i] > palette_target[i]) {
+               palette_current[i]--;
+            }
+        }
+        set_palette(palette_current);
+    }
+    flash_count++;
+}
 
 int main(void)
 {
@@ -38,6 +74,7 @@ int main(void)
                 break;
             }
             else if (key == 32) {  // space
+                init_flash();
                 do_what++;
                 if (do_what > 1) {
                    do_what = 0;
@@ -52,6 +89,7 @@ int main(void)
             do_tunnel(ptr_frame_buffer);
         }
 
+        do_flash();
         do_scroll(199 - 8, ptr_frame_buffer);
         copy_buffer(ptr_frame_buffer);
     }
