@@ -57,6 +57,7 @@ void do_flash()
 int main(void)
 {
     int do_what = 0;
+    int switch_count = 800;
 
     set_mode13h();
     set_palette(naagpal);
@@ -68,18 +69,29 @@ int main(void)
     ptr_frame_buffer = (unsigned char *)malloc(64000 * sizeof(unsigned char));
 
     while (1) {
+        int do_switch = 0;
         if (is_key_pressed()) {
             char key = get_key_code();
             if (key == 27) {  // ESC
                 break;
             }
             else if (key == 32) {  // space
-                init_flash();
-                do_what++;
-                if (do_what > 1) {
-                   do_what = 0;
-                }
+                do_switch = 1;
             }
+        }
+
+        switch_count--;
+        if (switch_count == 0) {
+            do_switch = 1;
+        }
+
+        if (do_switch) {
+            switch_count = 800;
+            do_what++;
+            if (do_what > 1) {
+               do_what = 0;
+            }
+            init_flash();
         }
 
         if (do_what == 0) {
