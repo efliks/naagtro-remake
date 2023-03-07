@@ -98,6 +98,7 @@ int main(void)
         free(ptr_frame_buffer);
     }
     deinit_bump_mapping();
+    deinit_tunnel();
     unset_mode13h();
 
     return 0;
