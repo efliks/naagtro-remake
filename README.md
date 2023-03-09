@@ -15,10 +15,6 @@ trajectory are different. The scroller text is kept original.
     <img src="showcase.gif" />
 </div>
 
-## Motivation
-
-- Nostalgia for the 1990s demoscene!
-
 ## Installation instructions
 
 To compile NAAGTRO, use the [DJGPP](https://github.com/andrewwutw/build-djgpp) 
@@ -31,19 +27,6 @@ Replace the path to DJGPP with your own.
     
     naagtro/build > cmake -D CMAKE_C_COMPILER=${DJGPP_DIR}/i586-pc-msdosdjgpp/bin/gcc ..
     naagtro/build > make
-
-## Required dependencies
-
-No dependencies other than DJGPP, build-essentials and cmake.
-
-## Future plans
-
-- Be able to compile natively in MS-DOS (with Turbo C, Watcom, etc.)
-- Be able to build for Linux and modern Windows (with SDL, etc.)
-- Support video modes other than VGA 13h
-- Be able to render off screen to JPEG files
-- Add more special effects
-- Add music (with Allegro game library, etc.)
 
 ## Q&A
 
@@ -62,7 +45,3 @@ No dependencies other than DJGPP, build-essentials and cmake.
 3. Why CMake, is that not overkill?
 
     No. CMake files are understood by IDEs, for example my personal favorite QtCreator.
-
-4. I have a problem XYZ. How do I get help?
-
-    Feel free to drop me a message if you encounter any issues with NAAGTRO.
