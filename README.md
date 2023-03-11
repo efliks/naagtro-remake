@@ -23,6 +23,7 @@ Replace the path to DJGPP with your own.
 
     naagtro > DJGPP_DIR=/home/mikolaj/local/opt/djgpp-12.1.0
     naagtro > source ${DJGPP_DIR}/setenv
+    naagtro > mkdir build
     naagtro > cd build
     
     naagtro/build > cmake -D CMAKE_C_COMPILER=${DJGPP_DIR}/i586-pc-msdosdjgpp/bin/gcc ..
