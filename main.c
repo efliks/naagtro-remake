@@ -11,6 +11,7 @@
 
 #include "naagtro.h"
 #include "low.h"
+#include "ticker.h"
 
 #include "bumpmap.h"
 #include "tunnel.h"
@@ -59,6 +60,8 @@ int main(void)
     int do_what = 0;
     int switch_count = 800;
 
+    ticker_init();
+
     set_mode13h();
     set_palette(naagpal);
 
@@ -69,6 +72,8 @@ int main(void)
     ptr_frame_buffer = (unsigned char *)malloc(64000 * sizeof(unsigned char));
 
     while (1) {
+        ticker_start(34);  // 34 ms ~ 30 fps
+
         int do_switch = 0;
         if (is_key_pressed()) {
             char key = get_key_code();
@@ -104,6 +109,8 @@ int main(void)
         do_flash();
         do_scroll(199 - 8, ptr_frame_buffer);
         copy_buffer(ptr_frame_buffer);
+
+        ticker_wait();
     }
     
     if (ptr_frame_buffer != NULL) {
@@ -111,7 +118,9 @@ int main(void)
     }
     deinit_bump_mapping();
     deinit_tunnel();
+    
     unset_mode13h();
+    ticker_done();
 
     return 0;
 }
