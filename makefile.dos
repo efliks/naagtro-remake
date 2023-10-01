@@ -1,0 +1,36 @@
+# You need to update your C:\AUTOEXEC.BAT to include the following lines:
+# 
+# set PATH=C:\DJGPP\BIN;%PATH%
+# set DJGPP=C:\DJGPP\DJGPP.ENV
+
+CFLAGS=-W -Wall -pedantic -O2
+
+all: naagtro.exe
+
+naagtro.exe: main.o data.o low.o bumpmap.o scroll.o ticker.o tunnel.o
+	gcc $^ -o $@ -lm
+
+main.o: main.c
+	gcc $(CFLAGS) -c main.c
+
+data.o: data.c
+	gcc $(CFLAGS) -c data.c
+
+low.o: low.c
+	gcc $(CFLAGS) -c low.c
+
+bumpmap.o: bumpmap.c
+	gcc $(CFLAGS) -c bumpmap.c
+
+scroll.o: scroll.c
+	gcc $(CFLAGS) -c scroll.c
+
+ticker.o: ticker.c
+	gcc $(CFLAGS) -c ticker.c
+
+tunnel.o: tunnel.c
+	gcc $(CFLAGS) -c tunnel.c
+
+.PHONY: clean
+clean:
+	-del naagtro.exe *.o
