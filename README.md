@@ -17,9 +17,11 @@ trajectory are different. The scroller text is kept original.
 
 ## Installation instructions
 
-To compile NAAGTRO, use the [DJGPP](https://github.com/andrewwutw/build-djgpp) 
-cross compiler. Enter the build directory, and run the following commands. 
-Replace the path to DJGPP with your own.
+To compile NAAGTRO, there are two options.
+
+Option #1, cross compile from Linux to DOS using [DJGPP](https://github.com/andrewwutw/build-djgpp). 
+Enter the build directory, and run the following commands. Replace the path to 
+DJGPP with your own.
 
     naagtro > DJGPP_DIR=/home/mikolaj/local/opt/djgpp-12.1.0
     naagtro > source ${DJGPP_DIR}/setenv
@@ -28,6 +30,16 @@ Replace the path to DJGPP with your own.
     
     naagtro/build > cmake -D CMAKE_C_COMPILER=${DJGPP_DIR}/i586-pc-msdosdjgpp/bin/gcc ..
     naagtro/build > make
+
+Option #2, it is possible to build natively under DOS or Win9x. Once you have DJGPP installed, 
+make sure to add these lines to your C:\AUTOEXEC.BAT:
+
+    set PATH=C:\DJGPP\BIN;%PATH%
+    set DJGPP=C:\DJGPP\DJGPP.ENV
+
+Then, simply call make in the main directory:
+
+    C:\NAAGTRO > make -f makefile.dos
 
 ## Q&A
 
